@@ -1,0 +1,378 @@
+/*
+Plug-in Name: Instant Post for WordPress
+Plug-in URI: http://samwyness.com/instant-post-for-wordpress
+Author: Sam Wyness
+Author URI: http://samwyness.com
+Description: A lightweight WordPress Plugin for instantly displaying posts using the WP REST API.
+Version: 0.1
+License: GNU General Public License v3.0 /
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Tags: instant post, instant, post, ajax, free, instant coffee
+
+This plug-in is the built for WordPress themes using the latest Twitter Bootstrap Framework. Instant Posr for WordPress uses minimal styling so customizing your post styles is easy. For best results try using the quikstart theme by http://themekraft.com.
+
+Credits:
+
+1. Bootstrap
+ * Bootstrap v3.3.6 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=f58353a31151a8c05d7c)
+ * Config saved to config.json and https://gist.github.com/f58353a31151a8c05d7c
+
+2. wp_bootstrap_navwalker
+ * Class Name: wp_bootstrap_navwalker
+ * GitHub URI: https://github.com/twittem/wp-bootstrap-navwalker
+
+3. Glyphicons
+ * A set of halfling icons provided free for bootstrap users
+ * Link http://glyphicons.com/
+
+*/
+
+
+/* Instant Post custom styles */
+.nopad {
+	padding-bottom: 0;
+}
+/* Container Setup */
+.ip_container {
+	display: block;
+	max-width: 1600px;
+	width: 100%;
+	margin-right: auto;
+	margin-left: auto;
+	padding-left: 15px;
+	padding-right: 15px;
+	box-sizing: border-box;
+}
+/* Column Setup */
+.ip_col_12_phone {
+	float: left;
+	position: relative;
+	min-height: 1px;
+	width: 100%;
+	margin: 30px 0 0;
+	padding-left: 15px;
+	padding-right: 15px;
+	box-sizing: border-box;
+}
+
+/* Hero Section */
+.hero_section {
+	display: block;
+	padding: 35px 0 150px;
+	background: inherit;
+}
+
+/* Refresh Post ALert */
+.new_posts_alert {
+	display: block;
+	position: fixed;
+	bottom: -60px;
+	height: 40px;
+	width: 100%;
+	padding: 8px;
+	background: dodgerblue;
+	color: #fff;
+	font-size: 16px;
+	text-align: center;
+	cursor: pointer;
+	transition: bottom 0.24s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+/* Post List */
+.post_list {
+	display: inline-block;
+	position: relative;
+	top: 0;
+	height: auto;
+	text-align: center;
+	transition: 0.34s ease-out;
+}
+.post_card_wrap {
+	margin: 30px auto 0;
+}
+.post_card {
+	position: relative;
+	height: auto;
+	top: 0;
+	background: ##f6f7f9;
+	border: 1px solid #e1e2e3;
+	border-radius: 4px;
+	overflow: hidden;
+	opacity: 1;
+	text-align: left;
+	animation: fadeIn 0.34s ease-out forwards;
+}
+.post_card_thumb {
+	width: 100%;
+	height: 225px;
+	background-color: #f9f9f9;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	margin-bottom: 15px;
+	border-bottom: 1px solid #e1e2e3;
+}
+.post_card_title {
+	padding: 0 15px;
+	font-size: 22px;
+	font-weight: bold;
+}
+.post_card .post_card_signature {
+	padding: 0 15px;
+}
+.post_card .post_card_signature .author_avatar_src {
+	display: inline-block !important;
+	width: 30px;
+	height: 30px;
+	border-radius: 100%;
+	margin: 0 5px;
+}
+.post_card_excerpt {
+	height: auto;
+	margin-bottom: 10px;
+	padding: 0 15px;
+	overflow: hidden;
+}
+.read_more_btn {
+	display: inline-block;
+	width: auto;
+	height: auto;
+	margin: 0 0 15px 0;
+	padding: 7px 15px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.read_more_btn:hover,
+.read_more_btn:focus,
+.read_more_btn:active {
+	background: inherit;
+	border-radius: 4px;
+	text-decoration: none;
+}
+
+/* Full Post */
+.full_post_div {
+	position: fixed;
+	top: 0;
+	right: -105%;
+	bottom: 0;
+	width: 100% !important;
+	height: 100%;
+	padding-bottom: 50px;
+	background: #fff;
+	box-shadow: 0px 1px 5px rgba(0,0,0,0.34);
+	z-index: 999900;
+	-webkit-overflow: touch;
+	transition: all 0.34s cubic-bezier(0.4, 0.0, 1, 1);
+}
+.full_post_wrap {
+	position: relative;
+	width: auto;
+	top: 0;
+	height: 100%;
+	opacity: 1;
+	overflow: scroll;
+	-webkit-overflow: touch;
+}
+.full_post_close {
+	display: block;
+	position: relative;
+	width: 100%;
+	top: 0;
+	padding: 0 5px 9px;
+	background: #fff;
+	font-weight: bold;
+	z-index: 999990;
+	cursor: pointer;
+	transition: all 0.24s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+.full_post_close i {
+	position: relative;
+	top: 6px;
+	margin-right: 0;
+}
+#full_post_col_1 {
+	height: auto;
+	padding: 0 !important;
+}
+#full_post_col_2 {
+	height: auto;
+	padding: 0 15px !important;
+}
+#full_post_col_2 .full_post_title {
+	margin-top: 30px;
+	font-size: 38px;
+}
+#full_post_col_2 .full_post_signature .author_avatar_src {
+	display: inline-block !important;
+	width: 30px;
+	height: 30px;
+	border-radius: 100%;
+	margin: 0 5px;
+}
+#full_post_col_2 .post_featured_image {
+	margin: 15px 0;
+}
+#full_post_col_2 .full_post_content {
+	font-size: 3vh;
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+	/* Container Setup */
+	.ip_container {
+		width: 85%;
+	}
+	/* Column Setup */
+	.ip_col_12_tablet {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 100%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.ip_col_6_tablet {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 50%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.ip_col_4_tablet {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 33.333333333%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.post_card_thumb {
+		height: 235px;
+	}
+}
+
+@media (min-width: 992px) {
+	#full_post_col_1 {
+		float: right;
+		padding: 30px !important;
+	}
+}
+
+@media (min-width: 1024px) {
+	/* Container Setup */
+	.ip_container {
+		width: 80%;
+	}
+	/* Column Setup */
+	.ip_col_12_screen {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 100%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.ip_col_6_screen {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 50%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.ip_col_4_screen {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 33.333333333%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.post_card_thumb {
+		height: 250px;
+	}
+}
+
+@media (min-width: 1440px) {
+	/* Column Setup */
+	.ip_col_12_big_screen {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 100%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.ip_col_6_big_screen {
+		float: left;
+		position: relative;
+		min-height: 1px;
+		width: 50%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+	.ip_col_4_big_screen {
+			float: left;
+		position: relative;
+		min-height: 1px;
+		width: 33.333333333%;
+		margin: 30px 0 0;
+		padding-left: 15px;
+		padding-right: 15px;
+		box-sizing: border-box;
+	}
+}
+
+
+/* ANIMATIONS */
+@keyframes fadeOut {
+	0% {}
+	100% {top: 250px; opacity: 0}
+}
+@keyframes rotate {
+	0% {}
+	100% {transform: rotate(360deg)}
+}
+
+/* TRANSITIONS */
+.new_posts_alert_enter {
+	bottom: 0px;
+	transition: bottom 0.24s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+.fade_in {
+	opacity: 1;
+	transition: all 1s;
+}
+.fade_out {
+	opacity: 0;
+	transition: all 0.34s;
+}
+.slide_in_right {
+	right: 0;
+	transition: all 0.34s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+.slide_down {
+	top: 30vh;
+	transition: all 0.34s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
